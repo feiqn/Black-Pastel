@@ -1,4 +1,4 @@
-package com.feiqn.blackpastel;
+package com.feiqn.blackpastel.screens;
 
 import com.badlogic.gdx.ScreenAdapter;
 
