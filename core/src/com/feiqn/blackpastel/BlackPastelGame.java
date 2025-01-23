@@ -8,25 +8,24 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class BlackPastelGame extends Game {
 	SpriteBatch batch;
-	Texture img;
-	
+
+	// public assetHandler;
+	public VNScreen activeVN;
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
 	}
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
+		ScreenUtils.clear(0, 1, 1, 1);
 		batch.begin();
-		batch.draw(img, 0, 0);
 		batch.end();
 	}
 	
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
 	}
 }
