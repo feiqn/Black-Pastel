@@ -21,6 +21,8 @@ public class AssetHandler {
     public Texture smallStageBGTexture;
     public Texture largeStageBGTexture;
 
+    public Texture drummerWantedPosterTexture;
+
 
     public AssetHandler() {
         this.manager = new AssetManager();
@@ -33,10 +35,12 @@ public class AssetHandler {
 
     private void load() {
         manager.load("ui/menu.png", Texture.class);
+        manager.load("ngmenu.jpg", Texture.class);
     }
 
     private void initializeTextures() {
-
+        drummerWantedPosterTexture = manager.get("ngmenu.jpg", Texture.class);
+//        drummerWantedPosterTexture = n
     }
 
     private void initializeFont() {

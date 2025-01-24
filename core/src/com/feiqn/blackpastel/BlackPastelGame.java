@@ -15,16 +15,9 @@ public class BlackPastelGame extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		assetHandler = new AssetHandler();
 
 		setScreen(new MainMenuScreen(this));
-	}
-
-	@Override
-	public void render () {
-		ScreenUtils.clear(0, 1, 1, 1);
-		batch.begin();
-		batch.end();
-
 	}
 	
 	@Override
