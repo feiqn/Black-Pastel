@@ -45,6 +45,7 @@ public class MainMenuScreen extends ScreenAdapter {
             @Override
             public void touchUp(InputEvent event, float x, float y, int point, int button) {
 
+
                 menuStage.addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
                     @Override
                     public void run() {

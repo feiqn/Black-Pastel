@@ -3,12 +3,11 @@ package com.feiqn.blackpastel.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.feiqn.blackpastel.BlackPastelGame;
@@ -19,36 +18,61 @@ public class VNScreen extends ScreenAdapter {
 
     private final Stage vnStage;
 
-    private final Group rootGroup;
-
-    private final Stack vnStack;
+    private final Label vnLabel;
 
     public VNScreen(BlackPastelGame game) {
         this.game = game;
 
         vnStage = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-
         vnStage.setDebugAll(true);
 
-        rootGroup = new Group();
-
-        vnStage.addActor(rootGroup);
-
-        vnStack = new Stack();
+        Stack vnStack = new Stack();
         vnStack.setFillParent(true);
 
-        rootGroup.addActor(vnStack);
+        vnStage.addActor(vnStack);
 
         final Image background = new Image(game.assetHandler().drummerWantedPosterTexture);
         vnStack.add(background);
 
+        background.setColor(1,1,1,0);
+        background.addAction(Actions.fadeIn(5));
+
+        vnLabel = new Label("Drummer wanted...", game.assetHandler().menuLabelStyle);
+        vnLabel.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int point, int button) {
+                playNext();
+            }
+        });
+
+        final Container<Label> labelContainer = new Container<>(vnLabel).top().left().pad(Gdx.graphics.getHeight() * .03f);
+//        labelContainer.setFillParent(true);
+
+        final Image labelShade = new Image(game.assetHandler().drummerWantedPosterTexture);
+        labelShade.setColor(0,0,0,.5f);
+
+        final Stack labelStack = new Stack();
+        labelStack.add(labelShade);
+        labelStack.add(labelContainer);
+
         final Table vnTable = new Table();
-        vnTable.setFillParent(true);
+        vnTable.add(labelStack).width(Gdx.graphics.getWidth() * .8f).height(Gdx.graphics.getHeight() * .4f);
+        vnTable.center();
+        vnTable.padTop(Gdx.graphics.getHeight() * .4f);
 
-        final Container<Table> vnContainer = new Container<>(vnTable);
-        vnContainer.setFillParent(true);
+        final Container<Table> tableContainer = new Container<>(vnTable);
+        tableContainer.setFillParent(true);
 
-        vnStack.add(vnContainer);
+        vnStack.add(tableContainer);
+    }
+
+    private void playNext() {
+
     }
 
     @Override
