@@ -1,5 +1,7 @@
 package com.feiqn.blackpastel.dialog;
 
+import com.badlogic.gdx.utils.Array;
+
 import java.util.HashMap;
 
 public class DialogFrame {
@@ -30,13 +32,20 @@ public class DialogFrame {
     private String doubleSpeakText;
     private String name;
     private String doubleSpeakName;
+    private String leadsToBranch;
+
+    private int leadsToIndex;
 
     private SpeakerPosition focusedPosition;
     private SpeakerPosition doubleSpeakPosition;
 
+    private Array<String> choices;         // User-visible choices
+    private Array<Integer> nextFrameIndices; // Corresponding next frame indices
+
     private boolean autoplayNext;
     private boolean complex;
     private boolean doubleSpeak;
+    private boolean terminal;
 
     public DialogFrame() {
         for(SpeakerPosition pos : SpeakerPosition.values()) {
@@ -47,6 +56,9 @@ public class DialogFrame {
         doubleSpeakText = "";
         name            = "";
         doubleSpeakName = "";
+        leadsToBranch   = "main";
+
+        leadsToIndex = 0;
 
         focusedPosition     = SpeakerPosition.LEFT;
         doubleSpeakPosition = SpeakerPosition.RIGHT;
@@ -62,6 +74,10 @@ public class DialogFrame {
      * Getters and setters.
      */
 
+    public void setFocusedExpression(CharacterExpression expression) {
+        positionsMap.put(focusedPosition, expression);
+    }
+
     public void setAutoplayNext(boolean autoplayNext) {
         this.autoplayNext = autoplayNext;
     }
@@ -74,8 +90,16 @@ public class DialogFrame {
         this.complex = complex;
     }
 
+    public void setLeadsToIndex(int leadsToIndex) {
+        this.leadsToIndex = leadsToIndex;
+    }
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setLeadsToBranch(String leadsToBranch) {
+        this.leadsToBranch = leadsToBranch;
     }
 
     public void setDoubleSpeak(boolean doubleSpeak) {
@@ -102,8 +126,37 @@ public class DialogFrame {
         this.text = text;
     }
 
+    public void setTerminal(boolean terminal) {
+        this.terminal = terminal;
+    }
+
+    public void addChoice(String theThingYoullSay, int theFrameIndexYoullGoToNextIfYouSayThis) {
+        if(choices == null) choices = new Array<>();
+        if(nextFrameIndices == null) nextFrameIndices = new Array<>();
+
+        choices.add(theThingYoullSay);
+        nextFrameIndices.add(theFrameIndexYoullGoToNextIfYouSayThis);
+    }
+
+    public boolean hasChoices() {
+        return choices != null && choices.size > 0;
+    }
+
+    public Array<String> getChoices() {
+        return choices;
+    }
+
+    public int getNextFrameIndex(int choiceIndex) {
+        //"on THIS frame, choice number THIS, takes you to THAT frame"
+        return nextFrameIndices.get(choiceIndex);
+    }
+
     public Background_ID getBackgroundID() {
         return backgroundID;
+    }
+
+    public String leadsToBranch() {
+        return leadsToBranch;
     }
 
     public boolean isAutoplayNext() {
@@ -112,6 +165,14 @@ public class DialogFrame {
 
     public boolean isComplex() {
         return complex;
+    }
+
+    public boolean isTerminal() {
+        return terminal;
+    }
+
+    public int getLeadsToIndex() {
+        return leadsToIndex;
     }
 
     public boolean isDoubleSpeak() {

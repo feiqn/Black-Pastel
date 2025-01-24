@@ -11,34 +11,45 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.feiqn.blackpastel.BlackPastelGame;
+import com.feiqn.blackpastel.dialog.CharacterExpression;
+import com.feiqn.blackpastel.dialog.DialogFrame;
+import com.feiqn.blackpastel.dialog.DialogScript;
 
 public class VNScreen extends ScreenAdapter {
 
     private final BlackPastelGame game;
 
-    private final Stage vnStage;
+    private Stage gameStage;
 
-    private final Label vnLabel;
+    private Label vnLabel;
+
+    private DialogScript dialogScript;
 
     public VNScreen(BlackPastelGame game) {
         this.game = game;
+    }
 
-        vnStage = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-        vnStage.setDebugAll(true);
+    @Override
+    public void show() {
+        super.show();
+
+        dialogScript = new DialogScript();
+
+        gameStage = new Stage(new ScalingViewport(Scaling.fit, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        gameStage.setDebugAll(true);
 
         Stack vnStack = new Stack();
-        vnStack.setFillParent(true);
 
-        vnStage.addActor(vnStack);
+        gameStage.addActor(vnStack);
 
         final Image background = new Image(game.assetHandler().drummerWantedPosterTexture);
         vnStack.add(background);
 
         background.setColor(1,1,1,0);
-        background.addAction(Actions.fadeIn(5));
+        background.addAction(Actions.fadeIn(3));
 
         vnLabel = new Label("Drummer wanted...", game.assetHandler().menuLabelStyle);
-        vnLabel.addListener(new InputListener() {
+        vnStack.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -51,10 +62,9 @@ public class VNScreen extends ScreenAdapter {
         });
 
         final Container<Label> labelContainer = new Container<>(vnLabel).top().left().pad(Gdx.graphics.getHeight() * .03f);
-//        labelContainer.setFillParent(true);
 
         final Image labelShade = new Image(game.assetHandler().drummerWantedPosterTexture);
-        labelShade.setColor(0,0,0,.5f);
+        labelShade.setColor(0,0,0,.7f);
 
         final Stack labelStack = new Stack();
         labelStack.add(labelShade);
@@ -72,13 +82,91 @@ public class VNScreen extends ScreenAdapter {
     }
 
     private void playNext() {
+        final DialogFrame nextFrame = dialogScript.nextFrame();
 
+        if(nextFrame.hasChoices()) {
+            displayChoices(nextFrame);
+        } else {
+//            checkIfSpeakerAlreadyExistsInOtherSlot(nextFrame.getSpeaker(), nextFrame.getFocusedPosition());
+//
+
+
+//            if(nextFrame.isComplex()) {
+//                layoutComplexFrame(nextFrame);
+//            } else {
+//                slot(nextFrame.getFocusedPosition()).update(nextFrame.getFocusedExpression(), nextFrame.isFacingLeft());
+//            }
+//
+//            displayBackground(nextFrame.getBackground());
+//
+//            nameLabel.setText(nextFrame.getFocusedName());
+//            moveNameLabel(nextFrame.getFocusedPosition());
+//
+//            displayDialog(nextFrame.getText(), nextFrame.getProgressiveDisplaySpeed(), nextFrame.getSnapToIndex());
+//
+//            if(nextFrame.usesDialogActions()) {
+//                parseActions(nextFrame.getActions());
+//            }
+//
+//            dimPortraitsExcept(nextFrame.getFocusedPosition());
+
+//
+//        if(nextFrame.autoAutoPlay()) {
+//            // TODO: allow input no
+//            game.activeGridScreen.setInputMode(GridScreen.InputMode.LOCKED);
+//            Timer.schedule(new Timer.Task() {
+//                @Override
+//                public void run() {
+//                    game.activeGridScreen.setInputMode(GridScreen.InputMode.CUTSCENE);
+//                    playNext();
+//                    // TODO: allow input yes
+//                }
+//            }, 1f); // TODO: dynamic wait time
+//        }
+        }
     }
 
-    @Override
-    public void show() {
-        super.show();
+    // Explicit method for handling user choice selection
+    private void displayChoices(DialogFrame frame) {
+        // TODO: convert AI abstract to local logic
+//        Table choiceTable = new Table();
+//
+//        // Add a button for each choice
+//        for (int i = 0; i < frame.getChoices().size; i++) {
+//            final int choiceIndex = i; // Needed to reference the correct index
+//            TextButton choiceButton = new TextButton(frame.getChoices().get(i), game.assetHandler.buttonStyle);
+//
+//            choiceButton.addListener(new ClickListener() {
+//                @Override
+//                public void clicked(InputEvent event, float x, float y) {
+//                    handleUserChoice(frame, choiceIndex); // Call the explicit handler
+//                }
+//            });
+//
+//            choiceTable.add(choiceButton).row(); // Add button to the table
+//        }
+//
+//        // Replace the current layout with the choice table
+//        layout.clear();
+//        layout.add(choiceTable);
+    }
 
+    // Method to handle the user's choice
+    private void handleUserChoice(DialogFrame frame, int choiceIndex) {
+//        int nextIndex = frame.getNextFrameIndex(choiceIndex);
+//
+//        // Check if the choice leads to a new script or continues in the same script
+//        if (nextIndex == -1 && frame.getChoices().get(choiceIndex).equals("Load Positive Branch")) {
+//            // Example of switching to a new script dynamically
+//            dialogScript = treeHandler.getScript("branch1");
+//            dialogScript.setFrameIndex(0); // Start at the beginning of the new branch
+//        } else {
+//            // Continue with the current script
+//            dialogScript.setFrameIndex(nextIndex);
+//        }
+//
+//        // Play the next frame after handling the choice
+//        playNext();
     }
 
     @Override
@@ -86,8 +174,38 @@ public class VNScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glClearColor(.5f, 0, .5f, 1);
 
-        vnStage.act();
-        vnStage.draw();
+        gameStage.act();
+        gameStage.draw();
     }
 
+
+    /**
+     * Helper class
+     */
+    private static class Slot {
+        private final DialogFrame.SpeakerPosition position;
+        private CharacterExpression speaker;
+
+        public Slot(DialogFrame.SpeakerPosition pos) {
+            this.position = pos;
+        }
+
+        public String speakerName() {
+            switch(speaker) {
+                case JAY_SMILING:
+                    return "Jay";
+                case KAI_SMILING:
+                    return "Kai";
+                case MOE_SMILING:
+                    return "Moe";
+                case ALEX_SMILING:
+                    return "Alex";
+                case RILEY_SMILING:
+                    return "Riley";
+                case NONE:
+                default:
+                    return "";
+            }
+        }
+    }
 }
