@@ -240,56 +240,57 @@ public class VNScreen extends ScreenAdapter {
     }
 
     private void playNext() {
-        // TODO: check for terminal frames
+        if(currentlyHeldFrame != null && currentlyHeldFrame.isTerminal()) {
+            Gdx.app.log("TERMINAL", "TERMINAL FRAME PASSED");
+            endConversation();
+        } else {
+            currentlyHeldFrame = dialogScript.frameAtIndex(nextIndex);
+            nextIndex = currentlyHeldFrame.followingFrameIndex();
 
-        currentlyHeldFrame = dialogScript.frameAtIndex(nextIndex);
-        nextIndex = currentlyHeldFrame.followingFrameIndex();
+            displayBackground(currentlyHeldFrame.getBackgroundID());
 
-        displayBackground(currentlyHeldFrame.getBackgroundID());
-
-        if(currentlyHeldFrame.setsFlags()) {
-            // set flags
+            if(currentlyHeldFrame.setsFlags()) {
+                // set flags
 //            currentlyHeldFrame.getFlags().get(currentlyHeldFrame.getFlags()
 //            storyHandler.addStoryFlag();
-        }
+            }
 
-        if(currentlyHeldFrame.hasChoices()) {
-            buildChoiceLayout();
+            if(currentlyHeldFrame.hasChoices()) {
+                buildChoiceLayout();
 
-        } else {
-            if(inputMode != InputMode.LINEAR_DIALOG) buildConversationLayout();
-
-            checkIfSpeakerAlreadyExistsInOtherSlot(currentlyHeldFrame.getName(), currentlyHeldFrame.getFocusedPosition());
-            dimPortraitsExcept(currentlyHeldFrame.getFocusedPosition());
-            moveNameLabel(currentlyHeldFrame.getFocusedPosition());
-
-            if(currentlyHeldFrame.isComplex()) {
-                layoutComplexFrame(currentlyHeldFrame);
             } else {
+                if(inputMode != InputMode.LINEAR_DIALOG) buildConversationLayout();
+
+                checkIfSpeakerAlreadyExistsInOtherSlot(currentlyHeldFrame.getName(), currentlyHeldFrame.getFocusedPosition());
+                dimPortraitsExcept(currentlyHeldFrame.getFocusedPosition());
+                moveNameLabel(currentlyHeldFrame.getFocusedPosition());
+
+                if(currentlyHeldFrame.isComplex()) {
+                    layoutComplexFrame(currentlyHeldFrame);
+                } else {
 //                slot(currentlyHeldFrame.getFocusedPosition()).update(currentlyHeldFrame.getFocusedExpression(), currentlyHeldFrame.isFacingLeft());
 //                final HashMap<DialogFrame.SpeakerPosition, CharacterExpression> h = currentlyHeldFrame.getPositionsMap();
 //                for(DialogFrame.SpeakerPosition pos : h.keySet()) {
 //                    slot(pos).speaker = h.get(pos);
 //                }
 
-                slot(currentlyHeldFrame.getFocusedPosition()).speaker = currentlyHeldFrame.getPositionsMap().get(currentlyHeldFrame.getFocusedPosition());
-                // What an ugly and confusing line.
-                // It makes the slot know what to draw in the table cell.
+                    slot(currentlyHeldFrame.getFocusedPosition()).speaker = currentlyHeldFrame.getPositionsMap().get(currentlyHeldFrame.getFocusedPosition());
+                    // What an ugly and confusing line.
+                    // It makes the slot know what to draw in the table cell.
 
-                buildConversationLayout();
+                    buildConversationLayout();
+                }
+
             }
 
-        }
-
 //        if(nameStack.getChild(1) instanceof Label) ((Label) nameStack.getChild(1)).setText(currentlyHeldFrame.getName());
-        // TODO: more name logic
+            // TODO: more name logic
 
-        displayDialog(currentlyHeldFrame.getText());
+            displayDialog(currentlyHeldFrame.getText());
 
 //            if(currentlyHeldFrame.usesDialogActions()) {
 //                parseActions(currentlyHeldFrame.getActions());
 //            }
-
 
 //        if(currentlyHeldFrame.autoAutoPlay()) {
 //            // TODO: allow input no
@@ -303,6 +304,9 @@ public class VNScreen extends ScreenAdapter {
 //                }
 //            }, 1f); // TODO: dynamic wait time
 //        }
+
+        }
+
     }
 
     private void displayDialog(CharSequence sequence) {
@@ -419,7 +423,8 @@ public class VNScreen extends ScreenAdapter {
          * Entering a room with an onRails conversation, and then the conversation ending
          * with you in the same room but now explorable, is a completely new RoomState
          */
-
+        vnStack.clear();
+        vnStack.add(new Label("To be continued...", game.assetHandler().menuLabelStyle));
 //        if roomState.onRails -> storyHandler.progressStory();
 //        else roomState.layoutObjects();
     }

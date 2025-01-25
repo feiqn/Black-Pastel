@@ -42,7 +42,7 @@ public class RState_Drummer_Wanted_Sign_1 extends RoomState {
               set("...but, man, it sure was fun.");
 
               // 4
-              set("...Maybe I should a number...");
+              set("...Maybe I should take a number...");
               lastFrame().addChoice("I bet mom still has my old kit in the attic!", 6);
               lastFrame().addChoice("...honestly, drumming sounds kind of lame.", 7);
 
@@ -63,7 +63,7 @@ public class RState_Drummer_Wanted_Sign_1 extends RoomState {
               lastFrame().leadsToFrame(9);
 
               // 9
-              set("Maybe I should a number!");
+              set("Maybe I should take a number!");
               lastFrame().addChoice("I bet mom still has my old kit in the attic!", 6);
               lastFrame().addChoice("...honestly, drumming sounds really lame.", 10);
 
