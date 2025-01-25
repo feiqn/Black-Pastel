@@ -1,6 +1,8 @@
 package com.feiqn.blackpastel.dialog;
 
 import com.badlogic.gdx.utils.Array;
+import com.feiqn.blackpastel.story.Decision;
+import com.feiqn.blackpastel.story.StoryHandler;
 
 import java.util.HashMap;
 
@@ -42,13 +44,15 @@ public class DialogFrame {
     private SpeakerPosition focusedPosition;
     private SpeakerPosition doubleSpeakPosition;
 
-    private Array<String> choices;         // User-visible choices
-    private Array<Integer> nextFrameIndices; // Corresponding next frame indices
+    private Array<Choice> choices;
 
     private boolean autoplayNext;
     private boolean complex;
     private boolean doubleSpeak;
     private boolean terminal;
+    private boolean setsFlags;
+
+    private Array<StoryHandler.StoryFlag> associatedFlags;
 
     public DialogFrame() {
         for(SpeakerPosition pos : SpeakerPosition.values()) {
@@ -71,11 +75,24 @@ public class DialogFrame {
         doubleSpeak  = false;
         autoplayNext = false;
         complex      = false;
+        terminal     = false;
+        setsFlags    = false;
+
+        associatedFlags = new Array<>();
     }
 
     /**
      * Getters and setters.
      */
+
+    public void setsFlag(Decision flag, boolean bool) {
+        setsFlags = true;
+
+        final StoryHandler.StoryFlag story = new StoryHandler.StoryFlag(flag);
+        story.set(bool);
+
+        associatedFlags.add(story);
+    }
 
     public void setFocusedExpression(CharacterExpression expression) {
         positionsMap.put(focusedPosition, expression);
@@ -93,7 +110,7 @@ public class DialogFrame {
         this.complex = complex;
     }
 
-    public void setLeadsToIndex(int leadsToIndex) {
+    public void leadsToFrame(int leadsToIndex) {
         this.leadsToIndex = leadsToIndex;
     }
 
@@ -135,24 +152,22 @@ public class DialogFrame {
 
     public void addChoice(String theThingYoullSay, int theFrameIndexYoullGoToNextIfYouSayThis) {
         if(choices == null) choices = new Array<>();
-        if(nextFrameIndices == null) nextFrameIndices = new Array<>();
 
-        choices.add(theThingYoullSay);
-        nextFrameIndices.add(theFrameIndexYoullGoToNextIfYouSayThis);
+        choices.add(new Choice(theThingYoullSay, theFrameIndexYoullGoToNextIfYouSayThis));
     }
 
     public boolean hasChoices() {
         return choices != null && choices.size > 0;
     }
 
-    public Array<String> getChoices() {
+    public Array<Choice> getChoices() {
         return choices;
     }
 
-    public int getNextFrameIndex(int choiceIndex) {
+//    public int getNextFrameIndex(int choiceIndex) {
         //"on THIS frame, choice number THIS, takes you to THAT frame"
-        return nextFrameIndices.get(choiceIndex);
-    }
+//        return nextFrameIndices.get(choiceIndex);
+//    }
 
     public Background_ID getBackgroundID() {
         return backgroundID;
@@ -174,7 +189,7 @@ public class DialogFrame {
         return terminal;
     }
 
-    public int getLeadsToIndex() {
+    public int followingFrameIndex() {
         return leadsToIndex;
     }
 
@@ -202,11 +217,37 @@ public class DialogFrame {
         return name;
     }
 
+    public Boolean setsFlags() {
+        return setsFlags;
+    }
+
+    public Array<StoryHandler.StoryFlag> getFlags() {
+        return associatedFlags;
+    }
+
     public String getText() {
         return text;
     }
 
     public HashMap<SpeakerPosition, CharacterExpression> getPositionsMap() {
         return positionsMap;
+    }
+
+    public static class Choice {
+        private final String text;
+        private final int leadsToIndex;
+
+        public Choice(String  text, int index) {
+            this.text = text;
+            this.leadsToIndex = index;
+        }
+
+        public int getLeadsToIndex() {
+            return leadsToIndex;
+        }
+
+        public String getText() {
+            return text;
+        }
     }
 }

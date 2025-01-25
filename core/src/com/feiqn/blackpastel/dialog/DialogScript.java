@@ -1,7 +1,7 @@
 package com.feiqn.blackpastel.dialog;
 
-import com.badlogic.gdx.utils.Array;
 
+import com.badlogic.gdx.Gdx;
 
 public class DialogScript {
 
@@ -46,6 +46,7 @@ public class DialogScript {
     }
 
     public DialogFrame nextFrame() {
+        // DEPRECATED
         frameIndex++;
         return dialogTree.getBranch("main").get(frameIndex - 1);
     }
@@ -56,6 +57,12 @@ public class DialogScript {
 
     public boolean continues() {
         return dialogTree.getBranch("main").size > frameIndex;
+    }
+
+    public DialogFrame frameAtIndex(int i) {
+        final DialogFrame frame = dialogTree.getBranch("main").get(i);
+        Gdx.app.log("frame leads to", frame.getText());
+        return frame;
     }
 
     protected DialogFrame lastFrame() {
@@ -89,7 +96,7 @@ public class DialogScript {
         frame.setFocusedExpression(expression);
 //        frame.setFacingLeft(flip);
 //        frame.setAutoplayNext(autoAutoPlay);
-        frame.setLeadsToIndex(dialogTree.getBranch(branch).size+1);
+        frame.leadsToFrame(dialogTree.getBranch(branch).size+1);
         dialogTree.getBranch(branch).add(frame);
 
     }
