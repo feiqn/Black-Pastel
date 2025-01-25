@@ -15,6 +15,7 @@ import com.feiqn.blackpastel.dialog.CharacterExpression;
 import com.feiqn.blackpastel.dialog.DialogFrame;
 import com.feiqn.blackpastel.dialog.DialogScript;
 import com.feiqn.blackpastel.screens.roomstates.RoomState;
+import com.feiqn.blackpastel.story.StoryHandler;
 
 public class VNScreen extends ScreenAdapter {
 
@@ -32,6 +33,8 @@ public class VNScreen extends ScreenAdapter {
 
     private RoomState roomState;
 
+    private StoryHandler storyHandler;
+
     public VNScreen(BlackPastelGame game) {
         this.game = game;
 
@@ -39,6 +42,8 @@ public class VNScreen extends ScreenAdapter {
         dialogScript = new DialogScript();
         vnLabel = new Label("", game.assetHandler().menuLabelStyle);
         vnStack = new Stack();
+
+        storyHandler = new StoryHandler();
 
         backgroundImage = new Image(game.assetHandler().drummerWantedPosterTexture);
         backgroundImage.setColor(1,1,1,0);
@@ -55,11 +60,11 @@ public class VNScreen extends ScreenAdapter {
         gameStage.addActor(vnStack);
         vnStack.setFillParent(true); // TODO: don't do this and do aspect ration world size something something chatgpt
 
-
         backgroundImage.addAction(Actions.fadeIn(3));
 
-        buildConversationLayout();
+        loadRoomState(roomState);
 
+//        buildConversationLayout();
     }
 
     private void buildConversationLayout() {
@@ -105,8 +110,6 @@ public class VNScreen extends ScreenAdapter {
         } else {
 //            checkIfSpeakerAlreadyExistsInOtherSlot(nextFrame.getSpeaker(), nextFrame.getFocusedPosition());
 //
-
-
 //            if(nextFrame.isComplex()) {
 //                layoutComplexFrame(nextFrame);
 //            } else {

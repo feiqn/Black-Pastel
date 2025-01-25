@@ -15,6 +15,7 @@ public class RoomState {
     public RoomState(VNScreen parent) {
         this.parent = parent;
         onRails = true;
+        defaultBG = DialogFrame.Background_ID.NONE;
     }
     
     public void layoutObjects() {
