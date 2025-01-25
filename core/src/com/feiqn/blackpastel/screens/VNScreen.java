@@ -14,6 +14,7 @@ import com.feiqn.blackpastel.BlackPastelGame;
 import com.feiqn.blackpastel.dialog.CharacterExpression;
 import com.feiqn.blackpastel.dialog.DialogFrame;
 import com.feiqn.blackpastel.dialog.DialogScript;
+import com.feiqn.blackpastel.screens.roomstates.RoomState;
 
 public class VNScreen extends ScreenAdapter {
 
@@ -23,33 +24,49 @@ public class VNScreen extends ScreenAdapter {
 
     private Label vnLabel;
 
+    private Stack vnStack;
+
+    private Image backgroundImage;
+
     private DialogScript dialogScript;
+
+    private RoomState roomState;
 
     public VNScreen(BlackPastelGame game) {
         this.game = game;
+
+        roomState = new RoomState(this);
+        dialogScript = new DialogScript();
+        vnLabel = new Label("", game.assetHandler().menuLabelStyle);
+        vnStack = new Stack();
+
+        backgroundImage = new Image(game.assetHandler().drummerWantedPosterTexture);
+        backgroundImage.setColor(1,1,1,0);
     }
 
     @Override
     public void show() {
         super.show();
 
-        dialogScript = new DialogScript();
 
         gameStage = new Stage(new ScalingViewport(Scaling.fit, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         gameStage.setDebugAll(true);
 
-        Stack vnStack = new Stack();
-
         gameStage.addActor(vnStack);
+        vnStack.setFillParent(true); // TODO: don't do this and do aspect ration world size something something chatgpt
 
-        final Image background = new Image(game.assetHandler().drummerWantedPosterTexture);
-        vnStack.add(background);
 
-        background.setColor(1,1,1,0);
-        background.addAction(Actions.fadeIn(3));
+        backgroundImage.addAction(Actions.fadeIn(3));
 
-        vnLabel = new Label("Drummer wanted...", game.assetHandler().menuLabelStyle);
-        vnStack.addListener(new InputListener() {
+        buildConversationLayout();
+
+    }
+
+    private void buildConversationLayout() {
+        vnStack.clearChildren();
+
+        final Container<Label> labelContainer = new Container<>(vnLabel).top().left().pad(Gdx.graphics.getHeight() * .03f);
+        labelContainer.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -60,8 +77,6 @@ public class VNScreen extends ScreenAdapter {
                 playNext();
             }
         });
-
-        final Container<Label> labelContainer = new Container<>(vnLabel).top().left().pad(Gdx.graphics.getHeight() * .03f);
 
         final Image labelShade = new Image(game.assetHandler().drummerWantedPosterTexture);
         labelShade.setColor(0,0,0,.7f);
@@ -78,6 +93,7 @@ public class VNScreen extends ScreenAdapter {
         final Container<Table> tableContainer = new Container<>(vnTable);
         tableContainer.setFillParent(true);
 
+        vnStack.add(backgroundImage);
         vnStack.add(tableContainer);
     }
 
@@ -167,6 +183,26 @@ public class VNScreen extends ScreenAdapter {
 //
 //        // Play the next frame after handling the choice
 //        playNext();
+    }
+
+    public void startConversation(DialogScript script) {
+
+    }
+
+    public void endConversation() {
+//        if roomState.onRails -> storyHandler.progressStory();
+//        else roomState.layoutObjects();
+    }
+
+    public void loadRoomState(RoomState roomState) {
+        switch(roomState.getBackgroundID()) {
+            // background = #image
+        }
+        if(roomState.isOnRails()) {
+            startConversation(roomState.getRailScript());
+        } else {
+            roomState.layoutObjects();
+        }
     }
 
     @Override

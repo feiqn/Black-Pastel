@@ -2,6 +2,7 @@ package com.feiqn.blackpastel.dialog;
 
 import com.badlogic.gdx.utils.Array;
 
+
 public class DialogScript {
 
     private int frameIndex;
@@ -19,6 +20,9 @@ public class DialogScript {
 
     protected void setSeries() {
         // script goes here
+
+        set("This is where I'd put my cutscene...");
+        set("...if I had one!!!");
 
         // Main 1
 //        set("One!");
@@ -54,27 +58,30 @@ public class DialogScript {
         return dialogTree.getBranch("main").size > frameIndex;
     }
 
-    private DialogFrame lastFrame() {
+    protected DialogFrame lastFrame() {
         return dialogTree.getBranch("main").get(dialogTree.getBranch("main").size-1);
     }
 
     /**
      * Builders
      */
-    private void set(CharacterExpression expression, String txt, DialogFrame.SpeakerPosition position) {
+    protected void set(String txt) {
+        set("main", CharacterExpression.NONE, txt, "", DialogFrame.SpeakerPosition.FIRST_PERSON, false, false);
+    }
+    protected void set(CharacterExpression expression, String txt, DialogFrame.SpeakerPosition position) {
         set("main", expression, txt, "", position, false, false);
     }
-    private void set(String branch, CharacterExpression expression, String txt, DialogFrame.SpeakerPosition position) {
+    protected void set(String branch, CharacterExpression expression, String txt, DialogFrame.SpeakerPosition position) {
         set(branch, expression, txt, "", position, false, false);
     }
-    private void set(CharacterExpression expression, String txt, DialogFrame.SpeakerPosition position, boolean flip) {
+    protected void set(CharacterExpression expression, String txt, DialogFrame.SpeakerPosition position, boolean flip) {
         set("main", expression, txt, "", position, flip, false);
     }
-    private void set(CharacterExpression expression, String txt, DialogFrame.SpeakerPosition position, boolean flip, boolean autoNext) {
+    protected void set(CharacterExpression expression, String txt, DialogFrame.SpeakerPosition position, boolean flip, boolean autoNext) {
         set("main", expression, txt, "", position, flip, autoNext);
     }
 
-    private void set(String branch, CharacterExpression expression, String txt, String name, DialogFrame.SpeakerPosition pos, boolean flip, boolean autoAutoPlay) {
+    protected void set(String branch, CharacterExpression expression, String txt, String name, DialogFrame.SpeakerPosition pos, boolean flip, boolean autoAutoPlay) {
         final DialogFrame frame = new DialogFrame();
 
         frame.setText(txt);
@@ -82,11 +89,12 @@ public class DialogScript {
         frame.setFocusedExpression(expression);
 //        frame.setFacingLeft(flip);
 //        frame.setAutoplayNext(autoAutoPlay);
-
+        frame.setLeadsToIndex(dialogTree.getBranch(branch).size+1);
         dialogTree.getBranch(branch).add(frame);
+
     }
 
-    private static class Choice {
+    protected static class Choice {
 
     }
 }

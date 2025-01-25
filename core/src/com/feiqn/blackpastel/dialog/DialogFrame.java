@@ -11,6 +11,8 @@ public class DialogFrame {
         REMOVE,
         BLACK,
 
+        WANTED_SIGN,
+
         STAGE_SMALL,
         STAGE_LARGE,
         GARAGE,
@@ -18,6 +20,7 @@ public class DialogFrame {
     }
 
     public enum SpeakerPosition {
+        FIRST_PERSON, // internal monologue
         FAR_LEFT,
         LEFT,
         RIGHT,
