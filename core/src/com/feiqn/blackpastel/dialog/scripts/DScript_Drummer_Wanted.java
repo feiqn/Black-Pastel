@@ -8,6 +8,10 @@ import com.feiqn.blackpastel.dialog.DialogScript;
 
 public class DScript_Drummer_Wanted extends DialogScript {
 
+    /**
+     * Define DSripts in RoomState instead, unless doing something big.
+     */
+
     public DScript_Drummer_Wanted() {
         super();
     }
